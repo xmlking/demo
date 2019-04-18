@@ -1,0 +1,49 @@
+spring:
+#  autoconfigure:
+#    exclude:
+#      - org.springframework.cloud.stream.schema.avro.AvroMessageConverterAutoConfiguration
+#      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+#
+  datasource:
+    url: jdbc:mysql://localhost:3306/demo?useSSL=false
+    username: demo
+    password: demo
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  cloud:
+    stream:
+      schema-registry-client.endpoint: http://localhost:8081
+      kafka:
+        binder:
+          brokers: localhost:9092
+#          configuration:
+#            value:
+#              deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+#              serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+
+      bindings:
+        output:
+          destination: xformed
+        test-sink:
+          destination: xformed
+        input:
+          destination: testtock
+        test-source:
+          destination: testtock
+        input2:
+#          group: customer
+          destination: customer-change
+          content-type: application/*+avro
+        output2:
+#          group: customer
+          destination: customer-enriched
+          content-type: application/*+avro
+
+
+customer:
+  poller:
+    cron: 1100
