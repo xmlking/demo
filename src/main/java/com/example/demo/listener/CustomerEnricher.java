@@ -1,5 +1,7 @@
-package com.example.demo;
+package com.example.demo.listener;
 
+import com.example.demo.domain.Customer;
+import com.example.demo.repository.CustomerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Input;
@@ -42,7 +44,6 @@ public class CustomerEnricher {
     //Following source is used as a test producer.
     @EnableBinding(Source.class)
     static class TestSource {
-
         private AtomicBoolean semaphore = new AtomicBoolean(true);
 
         @Bean
@@ -57,7 +58,6 @@ public class CustomerEnricher {
     //Following sink is used as a test consumer.
     @EnableBinding(Sink.class)
     static class TestSink {
-
         @StreamListener("test-sink")
         public void receive(String payload) {
             log.info("Data received: " + payload);

@@ -1,5 +1,6 @@
-package com.example.demo;
+package com.example.demo.repository;
 
+import com.example.demo.domain.Customer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

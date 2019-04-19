@@ -5,6 +5,7 @@
 ```bash
 docker-compose up mysql
 docker-compose up kafka
+docker-compose up schema-registry
 ```
 
 

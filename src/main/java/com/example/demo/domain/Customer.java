@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.domain;
 
 import lombok.*;
 
@@ -23,7 +23,7 @@ class BaseEntity {
 @Builder
 @Entity
 @Table(name = "customer", schema = "demo")
-class Customer extends BaseEntity {
+public class Customer extends BaseEntity {
     private String firstName;
     private String lastName;
     private String city;
@@ -31,11 +31,3 @@ class Customer extends BaseEntity {
 }
 
 
-@Data
-@ToString()
-@AllArgsConstructor(staticName = "of")
-@Builder
-class CustomerDto {
-    private Long id;
-    private String city;
-}
