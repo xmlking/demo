@@ -34,8 +34,8 @@ spring.cloud.stream:
         dlqName: customer-change-dlq
         # The following 2 props are not needed as they are same as the global ones.
         # Adding it here in order to illustrate the usage of it if they are indeed different from the global Serde's
-        keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
-        valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+#        keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+#        valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 #------------------------------------------------------------------------------------------------------------------
 spring.cloud.stream.schema:
   avro:
