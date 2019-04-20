@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "CustomerDto",
+  "namespace": "com.example.demo.domain",
+  "fields": [
+    {
+      "name": "id",
+      "type": "long"
+    },
+    {
+      "name": "city",
+      "type": "string"
+    }
+  ]
+}

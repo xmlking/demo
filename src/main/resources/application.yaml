@@ -1,9 +1,5 @@
 spring:
-#  autoconfigure:
-#    exclude:
-#      - org.springframework.cloud.stream.schema.avro.AvroMessageConverterAutoConfiguration
-#      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
-#
+  application.name: 'demo'
   datasource:
     url: jdbc:mysql://localhost:3306/demo?useSSL=false
     username: demo
@@ -17,47 +13,41 @@ spring:
 #------------------------------------------------------------------------------------------------------------------
 customer.poller.cron: 1100
 #------------------------------------------------------------------------------------------------------------------
-spring.cloud.stream.schema-registry-client.endpoint: http://localhost:8081
+
 #------------------------------------------------------------------------------------------------------------------
-spring.cloud.stream.bindings:
-  output:
-    destination: xformed
-  test-sink:
-    destination: xformed
-  input:
-    destination: testtock
-  test-source:
-    destination: testtock
-  customer-output:
-    destination: customer-enriched
-    binder: kafka
-    content-type: application/*+avro
-  customer-input:
-    destination: customer-change
-    group: ${spring.application.name}
-    binder: kafka
-    content-type: application/*+avro
-    consumer:
-      useNativeDecoding: true
+spring.cloud.stream:
+  bindings:
+    output:
+      destination: customer-enriched
+      content-type: application/*+avro
+      useNativeEncoding: true
+      producer:
+        useNativeEncoding: true
+        valueSerde: org.apache.kafka.common.serialization.Serdes$LongSerde
+    input:
+      destination: customer-change
+      group: ${spring.application.name}
+      content-type: application/*+avro
+      consumer:
+        useNativeDecoding: true
+        enableDlq: true
+        dlqName: customer-change-dlq
+        # The following 2 props are not needed as they are same as the global ones.
+        # Adding it here in order to illustrate the usage of it if they are indeed different from the global Serde's
+        keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 #------------------------------------------------------------------------------------------------------------------
-spring.cloud.stream.kafka.binder:
-  brokers: localhost:9092
-#  configuration:
-#    value:
-#      deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-#      serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+spring.cloud.stream.schema:
+  avro:
+    dynamic-schema-generation-enabled: true
 #------------------------------------------------------------------------------------------------------------------
-spring.cloud.stream.kafka.streams.binder:
-  brokers: localhost:9092
-  configuration:
-    schema.registry.url: http://localhost:8081
-    commit.interval.ms: 1000
-    default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-    default.value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
-#------------------------------------------------------------------------------------------------------------------
-spring.cloud.stream.kafka.streams.bindings.input:
-  consumer:
-    # The following 2 props are not needed as they are same as the global ones.
-    # Adding it here in order to illustrate the usage of it if they are indeed different from the global Serde's
-    keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
-    valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+spring.cloud.stream.kafka.streams:
+  binder:
+    brokers: localhost:9092
+    auto-create-topics: true
+    serdeError: sendToDlq # logAndContinue
+    configuration:
+      schema.registry.url: http://localhost:8081
+      commit.interval.ms: 1000
+      default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+      default.value.serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde

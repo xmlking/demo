@@ -1,6 +1,7 @@
 plugins {
-	id "org.springframework.boot" version "2.1.4.RELEASE"
 	id "java"
+	id "org.springframework.boot" version "2.1.4.RELEASE"
+	id "com.commercehub.gradle.plugin.avro" version "0.16.0"
 }
 
 apply plugin: "io.spring.dependency-management"
@@ -34,6 +35,7 @@ dependencies {
 	implementation "org.springframework.cloud:spring-cloud-stream-binder-kafka-streams"
 	implementation "io.confluent:kafka-avro-serializer:${confluentVersion}"
 	implementation "io.confluent:kafka-streams-avro-serde:${confluentVersion}"
+	implementation "org.apache.avro:avro:1.8.2" // FIXME: may not need if spring-cloud-stream upgrade to 1.8.2
 
 	compileOnly "org.projectlombok:lombok"
 	annotationProcessor "org.projectlombok:lombok"
@@ -48,3 +50,8 @@ dependencyManagement {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 	}
 }
+
+//avro {
+//	createSetters = true;
+//	fieldVisibility = "PRIVATE"
+//}
