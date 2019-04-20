@@ -15,8 +15,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Slf4j
 @Component
 @EnableBinding(KafkaStreamsProcessor.class)
@@ -33,23 +31,22 @@ public class CustomerEnricher {
     public KStream<?, CustomerDto> process(KStream<?, CustomerDto> input) {
 
         // for Debug. Print in batches
-        input.print(Printed.toSysOut());
+        if (log.isDebugEnabled()) {
+            input.print(Printed.toSysOut());
+        }
 
-        input.map((key, val) -> {
-            System.out.println(key);
-            System.out.println(val);
-
-            Optional<Customer> cust = customerRepository.findById(val.getId());
-            if (cust.isPresent()) {
-                Customer temp = cust.get();
-                log.info("customer 1#  " + temp);
+        return input.map((key, val) -> {
+            Customer customer = customerRepository.findById(val.getId()).orElse(null);
+            if (customer != null && val.getCity() != null) {
+                customer.setCity(val.getCity());
+                customerRepository.save(customer);
+                log.info("customer changed# " + customer.getCity());
+                return new KeyValue<>(key, val);
             } else {
-                log.info("customer 2#  ");
+                log.info("customer not-changed# " + val.getCity());
+                return new KeyValue<>(key, val);
             }
-
-            return new KeyValue<>(key, val);
         });
-        return input;
     }
 
     @KafkaListener(id = "foo", topics = "customer-change-dlq")
@@ -57,21 +54,6 @@ public class CustomerEnricher {
         System.out.println("DLQ: " + in);
     }
 }
-
-
-//Following source is used as a test producer.
-//@EnableBinding(Source.class)
-//static class TestSource {
-//    private AtomicBoolean semaphore = new AtomicBoolean(true);
-//
-//    @Bean
-//    @InboundChannelAdapter(channel = "test-source", poller = @Poller(fixedDelay = "${customer.poller.cron:1000}"))
-//    public MessageSource<Long> sendTestData() {
-//        return () ->
-//                new GenericMessage<>(this.semaphore.getAndSet(!this.semaphore.get()) ? 2L : 3L);
-//
-//    }
-//}
 
 //interface KStreamProcessorWithBranches {
 //

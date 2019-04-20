@@ -42,7 +42,7 @@ gradle bootRun
 
 {"id": 2, "city": "irvine"}
 {"id": 3, "city": "costa"}
-{"id": 4, "city": "costa"}
+{"id": 4, "city": "santa"}
 ```
 
 #### consumer
@@ -56,6 +56,7 @@ gradle bootRun
 > Temporarily update the retention time on the topic to one second:
 ```bash
 ./bin/kafka-configs --zookeeper localhost:2181 --entity-type topics --alter --entity-name customer-change --add-config retention.ms=1000
+# after all messages expired
 ./bin/kafka-configs --zookeeper localhost:2181 --entity-type topics --alter --entity-name customer-change --delete-config retention.ms
 ./bin/kafka-configs --zookeeper localhost:2181 --describe --entity-type topics --entity-name customer-change
 ```
