@@ -20,12 +20,16 @@ docker-compose up control-center  # Optional
 ### Build
 ```bash
 gradle build
+gradle build -x test
+
+mvn install -DskipTests
 ```
 > generate build/libs/demo-0.0.1-SNAPSHOT.jar
 
 ### Run
 ```bash
 gradle bootRun
+mvn spring-boot:run
 ```
 
 
