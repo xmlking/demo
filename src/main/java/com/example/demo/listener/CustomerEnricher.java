@@ -3,6 +3,7 @@ package com.example.demo.listener;
 import com.example.demo.domain.Customer;
 import com.example.demo.domain.CustomerDto;
 import com.example.demo.repository.CustomerRepository;
+import com.google.common.flogger.FluentLogger;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 @EnableBinding(KafkaStreamsProcessor.class)
 public class CustomerEnricher {
+    private final FluentLogger logger = FluentLogger.forEnclosingClass();
     private final CustomerRepository customerRepository;
 
     public CustomerEnricher(CustomerRepository customerRepository) {
@@ -41,6 +43,7 @@ public class CustomerEnricher {
                 customer.setCity(val.getCity());
                 customerRepository.save(customer);
                 log.info("customer changed# " + customer.getCity());
+                logger.atInfo().log("customer changed#" , customer);
                 return new KeyValue<>(key, val);
             } else {
                 log.info("customer not-changed# " + val.getCity());
